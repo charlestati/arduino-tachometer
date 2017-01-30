@@ -2,17 +2,41 @@
 
 #ifndef UNIT_TEST
 
+const int buttonPin = 2;
+int buttonState;
+int lastButtonState = HIGH;
+
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 10;
+
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(9600);
+  pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
+  int reading = digitalRead(buttonPin);
+
+  if (reading != lastButtonState)
+  {
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay)
+  {
+    if (reading != buttonState)
+    {
+      buttonState = reading;
+      if (buttonState == LOW)
+      {
+        Serial.println("Button pushed");
+      }
+    }
+  }
+
+  lastButtonState = reading;
 }
 
 #endif
